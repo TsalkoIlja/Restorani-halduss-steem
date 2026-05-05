@@ -7,6 +7,7 @@ namespace Restorani_haldussüsteem
     {
         static void Main(string[] args)
         {
+            // --- KLIENDI LOOMINE ---
             string kliendiNimi;
             do
             {
@@ -16,8 +17,11 @@ namespace Restorani_haldussüsteem
             while (string.IsNullOrWhiteSpace(kliendiNimi));
 
             var customer = new Customer(kliendiNimi, 1);
+            customer.DisplayInfo();
+
             var order = new Order();
 
+            // --- TOODETE LISAMINE ---
             Console.WriteLine("\nMitu toodet soovid lisada?");
             int count;
             while (!int.TryParse(Console.ReadLine(), out count))
@@ -34,7 +38,6 @@ namespace Restorani_haldussüsteem
 
                 double hind;
 
-                // TryParse, который принимает и запятую, и точку
                 while (!double.TryParse(
                     Console.ReadLine().Replace(",", "."),
                     NumberStyles.Any,
@@ -51,11 +54,17 @@ namespace Restorani_haldussüsteem
             customer.MakeOrder(order);
 
             Console.WriteLine($"\nTellimuse summa: {order.CalculateTotal()} €");
-            Console.WriteLine($"Staatus: {order.Status}");
+            Console.WriteLine($"Tellimuse algne staatus: {order.Status}");
 
+            // --- TÖÖTAJATE LOOMINE ---
             var director = new Director("Mari", 2, 2500);
             var chef = new Chef("Jaan", 3, 1800);
 
+            Console.WriteLine("\nTöötajate info:");
+            director.DisplayInfo();
+            chef.DisplayInfo();
+
+            // --- TÖÖTLEJA VALIK ---
             Console.WriteLine("\nKes töötleb tellimust?");
             Console.WriteLine("1 - Direktor");
             Console.WriteLine("2 - Kokk");
@@ -65,10 +74,12 @@ namespace Restorani_haldussüsteem
 
             if (valik == "1")
             {
+                director.DoWork();
                 director.ProcessOrder(order);
             }
             else if (valik == "2")
             {
+                chef.DoWork();
                 chef.ProcessOrder(order);
             }
             else
@@ -76,8 +87,23 @@ namespace Restorani_haldussüsteem
                 Console.WriteLine("Vale valik.");
             }
 
-            Console.WriteLine($"Tellimuse lõplik staatus: {order.Status}");
+            Console.WriteLine($"Tellimuse staatus pärast töötlemist: {order.Status}");
 
+            // --- KAS TÜHISTADA TELLIMUS? ---
+            Console.WriteLine("\nKas soovid tellimust tühistada? (jah/ei)");
+            string cancel = Console.ReadLine().ToLower();
+
+            if (cancel == "jah")
+            {
+                if (valik == "1")
+                    director.CancelOrder(order);
+                else if (valik == "2")
+                    chef.CancelOrder(order);
+
+                Console.WriteLine($"Tellimus tühistatud. Lõplik staatus: {order.Status}");
+            }
+
+            Console.WriteLine("\nTestimine lõpetatud.");
             Console.ReadLine();
         }
     }

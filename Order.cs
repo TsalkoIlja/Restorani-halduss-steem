@@ -13,7 +13,7 @@ namespace Restorani_haldussüsteem
 
         public Order()
         {
-            Status = "Uus";
+            Status = "Valmistamisel";
         }
 
         public void AddItem(MenuItem item)
